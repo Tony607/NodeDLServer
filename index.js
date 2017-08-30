@@ -7,6 +7,7 @@ var childProcess=require("child_process");
 const Str_Destination = "Destination: "
 const Str_DownloadFinish = "[download] 100%"
 var videoName = "video.mp4"
+const VideoExtentions = [".mp4",".webm",".avi",".mov",".wmv",".3gp",".flv",".mpegps",".mpegp4"]
 var exeShell = function(cmd, printlistener){
   console.log(cmd)
   child = childProcess.exec(cmd,  { 
@@ -15,6 +16,9 @@ var exeShell = function(cmd, printlistener){
       stdio: [ 'ignore', 1, 2 ], 
   }); 
   child.unref(); 
+  child.on('exit', function() {
+    console.log(">>>>>cmd exit")
+  })
   child.stdout.on('data', function(data) {
       // console.log(data.toString()); 
       printlistener(data.toString())
@@ -27,9 +31,9 @@ var movieCallback = function(text){
   io.emit('chat message', text);
   arr = text.split(" ")
     for(i = 0;i<arr.length;i++){
-    if(arr[i].toLowerCase().indexOf(".mp4") !== -1){
-      videoName = text.substring(Str_Destination.length+text.indexOf(Str_Destination)).trim()
-      console.log(">>>>Video name",videoName)
+      if (new RegExp(VideoExtentions.join("|")).test(arr[i])){
+        videoName = arr[i]
+        console.log(">>>>Video name",videoName)
     }
   }
   if(text.indexOf(Str_DownloadFinish) !== -1){
@@ -38,11 +42,10 @@ var movieCallback = function(text){
   }
   console.log(text)
 }
-app.get('/video/*.mp4', function(req, res){
-  filename = req.params['0']
+app.get('/video/:filename', function(req, res){
+  filename = req.params['filename']
   if(filename.length>0)
   {
-    filename = filename+".mp4"
     console.log(">>>>Send Video:",filename)
     var options = {
       root: __dirname,
@@ -98,7 +101,7 @@ io.on('connection', function(socket){
         if(Number(args[1])){
           resolutionArg = getResolutionArg(Number(args[1]))
       }
-      cmd ="youtube-dl --restrict-filenames --recode-video mp4"+ resolutionArg +url
+      cmd ="youtube-dl --restrict-filenames"+ resolutionArg +url// --recode-video mp4
       exeShell(cmd, movieCallback);
     }
   });
