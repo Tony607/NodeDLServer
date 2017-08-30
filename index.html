@@ -35,7 +35,7 @@
         });
 
         socket.on('video ready', function(msg){
-          newelement = "<li><a href=\"video\\"+msg+"\">"+msg+"</a></li>"
+          newelement = "<li><a href=\"video/"+msg+"\">"+msg+"</a></li>"
           $('#messages').append(newelement);
           window.scrollTo(0, document.body.scrollHeight);
         });
