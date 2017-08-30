@@ -34,10 +34,36 @@ var movieCallback = function(text){
   }
   if(text.indexOf(Str_DownloadFinish) !== -1){
     console.log(">>>>Download finished")
-    io.emit('video ready', "ready");
+    io.emit('video ready', videoName);
   }
   console.log(text)
 }
+app.get('/video/*.mp4', function(req, res){
+  filename = req.params['0']
+  if(filename.length>0)
+  {
+    filename = filename+".mp4"
+    console.log(">>>>Send Video:",filename)
+    var options = {
+      root: __dirname,
+      dotfiles: 'deny',
+      headers: {
+          'x-timestamp': Date.now(),
+          'x-sent': true
+      }
+    };
+
+    res.sendFile(filename, options, function (err) {
+      if (err) {
+        // next(err);
+      } else {
+        console.log('>>>>>>Sent:', filename);
+      }
+    });
+  } else{
+    res.sendFile(__dirname + '/index.html');
+  }
+});
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
