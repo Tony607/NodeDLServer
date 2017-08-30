@@ -25,9 +25,12 @@ var getResolutionArg = function(resolution){
 }
 var movieCallback = function(text){
   io.emit('chat message', text);
-  if(text.indexOf(Str_Destination) !== -1 && text.toLowerCase().indexOf(".mp4") !== -1){
-    videoName = text.substring(Str_Destination.length+text.indexOf(Str_Destination)).trim()
-    console.log(">>>>Video name",videoName)
+  arr = text.split(" ")
+    for(i = 0;i<arr.length;i++){
+    if(arr[i].toLowerCase().indexOf(".mp4") !== -1){
+      videoName = text.substring(Str_Destination.length+text.indexOf(Str_Destination)).trim()
+      console.log(">>>>Video name",videoName)
+    }
   }
   if(text.indexOf(Str_DownloadFinish) !== -1){
     console.log(">>>>Download finished")
