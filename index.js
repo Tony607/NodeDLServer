@@ -31,7 +31,7 @@ var movieCallback = function(text){
   io.emit('chat message', text);
   arr = text.split(" ")
     for(i = 0;i<arr.length;i++){
-      if (new RegExp(VideoExtentions.join("|")).test(arr[i])){
+      if (new RegExp(VideoExtentions.join("|")).test(arr[i].toLowerCase())){
         videoName = arr[i]
         console.log(">>>>Video name",videoName)
     }
